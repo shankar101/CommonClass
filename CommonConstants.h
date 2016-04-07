@@ -1,6 +1,5 @@
 //
 //  CommonConstants.h
-//  Demo_Distance
 //
 //  Created by Shankar Mallick on 29/10/14.
 //  Copyright (c) 2014 Shankar Mallick. All rights reserved.
