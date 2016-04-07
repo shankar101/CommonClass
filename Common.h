@@ -1,9 +1,9 @@
 //
 //  Common.h
-//  ChildrenStrorybook
+
 //
-//  Created by Apple on 13/05/13.
-//  Copyright (c) 2013 Indusnet Technologies. All rights reserved.
+//  Created by Shankar Mallick on 13/05/13.
+//  Copyright (c) 2013 shankarm_ios. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
