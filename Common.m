@@ -13,7 +13,11 @@ NSString *const kUIActivityIndicatorView = @"UIActivityIndicatorView";
 NSString *const kTJActivityIndicator = @"TJActivityIndicator";
 NSString *const kTJCircularSpinner = @"TJCircularSpinner";
 NSString *const kTJBeachBallSpinner = @"TJBeachBallSpinner";
-
+#define timeFormat1                      @"hh:mm a"
+#define dateFormatForChat               @"MMM dd, yyyy"
+#define dateFormatForConvrList          @"MM-dd-yyyy"
+#define dateFormatForGMT                @"yyyy-MM-dd HH:mm:ss"
+#define onlyDateFormatForGMT            @"yyyy-MM-dd"
 static Common *common;
 
 @implementation Common
@@ -873,6 +877,13 @@ static Common *common;
     }
     return gettime;
 }
+-(NSDateFormatter *)dateFormatter
+{
+    if (!self.formatter4date) {
+        _formatter4date = [[NSDateFormatter alloc] init];
+    }
+    return self.formatter4date;
+}
 @end
 NSString *encodeEmojiString(NSString *actualString) {
     actualString = [actualString stringByReplacingOccurrencesOfString:@"'" withString:@"¶¶1"];
@@ -900,4 +911,63 @@ NSString *decodeEmojiString(NSString *encodedString) {
     encodedString = [encodedString stringByReplacingOccurrencesOfString:@"¶¶2" withString:@","];
     encodedString = [encodedString stringByReplacingOccurrencesOfString:@"¶¶1" withString:@"'"];
     return encodedString;
+}
+NSString* convertGMTDateToLocalDate(NSString* dateTime,NSString *dateFormat,BOOL showTime,BOOL showDate4Email){
+    
+    NSDateComponents *components;
+    NSInteger days;
+    
+    [[[Common SharedInstance] dateFormatter] setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [[[Common SharedInstance] dateFormatter] setDateFormat:dateFormatForGMT];
+    NSDate *inDate = [[[Common SharedInstance] dateFormatter] dateFromString:dateTime];
+    
+    if(showDate4Email){
+        
+        [[[Common SharedInstance] dateFormatter] setTimeZone:[NSTimeZone localTimeZone]];
+        [[[Common SharedInstance] dateFormatter] setDateFormat:dateFormat];
+        
+        return [[[Common SharedInstance] dateFormatter] stringFromDate:inDate];
+    }
+    else{
+        
+        if(![dateFormat isEqualToString:timeFormat1]){
+            
+            [[[Common SharedInstance] dateFormatter] setDateFormat:onlyDateFormatForGMT];
+            NSString *str =[[[Common SharedInstance] dateFormatter] stringFromDate:inDate];
+            NSString *str1 =[[[Common SharedInstance] dateFormatter] stringFromDate:[NSDate date]];
+            
+            components = [[NSCalendar currentCalendar] components: NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute fromDate:[[[Common SharedInstance] dateFormatter] dateFromString:str] toDate:[[[Common SharedInstance] dateFormatter] dateFromString:str1] options:1];
+            
+            days = [components day];
+            
+            if(days>0){
+                if(days>1){
+                    [[[Common SharedInstance] dateFormatter] setTimeZone:[NSTimeZone localTimeZone]];
+                    [[[Common SharedInstance] dateFormatter] setDateFormat:dateFormat];
+                    
+                    return [[[Common SharedInstance] dateFormatter] stringFromDate:inDate];
+                }
+                else{
+                    return @"Yesterday";
+                }
+            }
+            else{
+                if(showTime){
+                    [[[Common SharedInstance] dateFormatter] setTimeZone:[NSTimeZone localTimeZone]];
+                    [[[Common SharedInstance] dateFormatter] setDateFormat:timeFormat1];
+                    
+                    return [[[Common SharedInstance] dateFormatter] stringFromDate:inDate];
+                }
+                else{
+                    return @"Today";
+                }
+            }
+        }
+        else{
+            [[[Common SharedInstance] dateFormatter] setTimeZone:[NSTimeZone localTimeZone]];
+            [[[Common SharedInstance] dateFormatter] setDateFormat:dateFormat];
+            
+            return [[[Common SharedInstance] dateFormatter] stringFromDate:inDate];
+        }
+    }
 }
