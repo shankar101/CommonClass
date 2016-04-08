@@ -140,6 +140,7 @@ typedef enum
 @property (nonatomic,weak)UIView *Vw4FilterPopUp;
 @property (nonatomic,weak) UIView *Vw4stngsDropDown;
 @property (weak, nonatomic) NSLayoutConstraint *constant4SettingsHeight;
+@property (nonatomic, strong) NSDateFormatter *formatter4date;
 ///
 //
 +(Common *)SharedInstance;
